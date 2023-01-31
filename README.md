@@ -44,3 +44,4 @@ You can disable the cache busting add the following property in the **published*
 
 TODO:
 Be able to cache bust scripts/styles in index.html
+Automatically append the version of the assembly as query string
