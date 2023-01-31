@@ -9,7 +9,7 @@
 	<Target Name="_UpdateAssets" AfterTargets="Publish">
 		<UpdateAssets PublishDir="$(PublishDir)" DisableCacheBusting="$(DisableCacheBusting)" CacheId="$(CacheId)"
 			BlazorEnableCompression="$(BlazorEnableCompression)" CompressionLevel="$(_BlazorBrotliCompressionLevel)"
-			BrotliCompressToolPath="$(_BlazorCBBrotliCompressDll)"></UpdateBlazorScript>
+			BrotliCompressToolPath="$(_BlazorCBBrotliCompressDll)"></UpdateAssets>
 	</Target>
 
 </Project>

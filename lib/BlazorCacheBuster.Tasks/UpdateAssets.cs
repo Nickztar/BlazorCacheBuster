@@ -17,6 +17,8 @@ namespace BlazorCacheBuster.Tasks
 
         public bool DisableCacheBusting { get; set; }
         public bool BlazorEnableCompression { get; set; } = true;
+        public string? CompressionLevel { get; set; }
+
         public string CacheId { get; set; } = Guid.NewGuid().ToString("N");
 
         public override bool Execute()
@@ -25,38 +27,37 @@ namespace BlazorCacheBuster.Tasks
             {
                 return true;
             }
-            var bootJsonPath = Path.Combine(frameworkDir, "blazor.boot.json");
-            var bootJsonGzPath = Path.Combine(frameworkDir, "blazor.boot.json.gz");
-            var bootJsonBrPath = Path.Combine(frameworkDir, "blazor.boot.json.br");
-
-            Log.LogMessage(MessageImportance.High, $"BlazorCacheBuster: Updating \"{bootJsonPath}\"");
-            var bootJson = File.ReadAllText(bootJsonPath);
-            bootJson = bootJson.Replace(".lib.module.js", $".lib.module.js?q={CacheId}");
-            File.WriteAllText(bootJsonPath, bootJson);
-
-            if (File.Exists(bootJsonGzPath) && BlazorEnableCompression)
+            var frameworkDirs = Directory.GetDirectories(PublishDir, "_framework", SearchOption.AllDirectories);
+            foreach (var frameworkDir in frameworkDirs)
             {
-                Log.LogMessage(MessageImportance.High, $"BlazorCacheBuster: Recompressing \"{bootJsonGzPath}\"");
-                if (!Tools.GZipCompress(bootJsonPath, bootJsonGzPath, Log))
+                var bootJsonPath = Path.Combine(frameworkDir, "blazor.boot.json");
+                var bootJsonGzPath = Path.Combine(frameworkDir, "blazor.boot.json.gz");
+                var bootJsonBrPath = Path.Combine(frameworkDir, "blazor.boot.json.br");
+
+                Log.LogMessage(MessageImportance.High, $"BlazorCacheBuster: Updating \"{bootJsonPath}\"");
+                var bootJson = File.ReadAllText(bootJsonPath);
+                bootJson = bootJson.Replace(".lib.module.js", $".lib.module.js?q={CacheId}");
+                File.WriteAllText(bootJsonPath, bootJson);
+
+                if (File.Exists(bootJsonGzPath) && BlazorEnableCompression)
                 {
-                    return false;
+                    Log.LogMessage(MessageImportance.High, $"BlazorCacheBuster: Recompressing \"{bootJsonGzPath}\"");
+                    if (!Tools.GZipCompress(bootJsonPath, bootJsonGzPath, Log))
+                    {
+                        return false;
+                    }
+                }
+                if (File.Exists(bootJsonBrPath) && BlazorEnableCompression)
+                {
+                    Log.LogMessage(MessageImportance.High, $"BlazorCacheBuster: Recompressing \"{bootJsonBrPath}\"");
+                    if (!Tools.BrotliCompress(bootJsonPath, bootJsonBrPath, BrotliCompressToolPath, CompressionLevel, Log))
+                    {
+                        return false;
+                    }
                 }
             }
-            if (File.Exists(bootJsonBrPath) && BlazorEnableCompression)
-            {
-                Log.LogMessage(MessageImportance.High, $"BlazorCacheBuster: Recompressing \"{bootJsonBrPath}\"");
-                if (!Tools.BrotliCompress(bootJsonPath, bootJsonBrPath, BrotliCompressToolPath, CompressionLevel, Log))
-                {
-                    return false;
-                }
-            }
+
+            return true;
         }
-
-
-        public static MemoryStream GenerateStreamFromString(string value)
-        {
-            return new MemoryStream(Encoding.UTF8.GetBytes(value ?? ""));
-        }
-
     }
 }
