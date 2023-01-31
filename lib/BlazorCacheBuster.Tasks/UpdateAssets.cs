@@ -10,14 +10,14 @@ namespace BlazorCacheBuster.Tasks
     public class UpdateAssets : Task
     {
         [Required]
-        public string? PublishDir { get; set; }
+        public string PublishDir { get; set; }
 
         [Required]
         public string BrotliCompressToolPath { get; set; }
 
         public bool DisableCacheBusting { get; set; }
         public bool BlazorEnableCompression { get; set; } = true;
-        public string? CompressionLevel { get; set; }
+        public string CompressionLevel { get; set; }
 
         public string CacheId { get; set; } = Guid.NewGuid().ToString("N");
 
@@ -34,7 +34,7 @@ namespace BlazorCacheBuster.Tasks
                 var bootJsonGzPath = Path.Combine(frameworkDir, "blazor.boot.json.gz");
                 var bootJsonBrPath = Path.Combine(frameworkDir, "blazor.boot.json.br");
 
-                Log.LogMessage(MessageImportance.High, $"BlazorCacheBuster: Updating \"{bootJsonPath}\"");
+                Log.LogMessage(MessageImportance.High, $"BlazorCacheBuster: Updating \"{bootJsonPath}\" with new query string: \"{CacheId}\"");
                 var bootJson = File.ReadAllText(bootJsonPath);
                 bootJson = bootJson.Replace(".lib.module.js", $".lib.module.js?q={CacheId}");
                 File.WriteAllText(bootJsonPath, bootJson);
