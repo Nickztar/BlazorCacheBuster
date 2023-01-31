@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+	<PropertyGroup>
+		<PackageId>BlazorCacheBuster</PackageId>
+		<TargetFramework>net6.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<PackageTags>blazor blazorwasm wasm cache cachebuster</PackageTags>
+		<Authors>Nicholas Broström (Nickztar)</Authors>
+		<PackageProjectUrl>https://github.com/nickztar/BlazorCacheBuster</PackageProjectUrl>
+		<Description>Pruge cache on publish</Description>
+		<VersionSuffix>$(VersionSuffix)</VersionSuffix>
+		<Version>0.0.1</Version>
+		<Version Condition=" '$(VersionSuffix)' != '' ">$(Version)-$(VersionSuffix)</Version>
+	</PropertyGroup>
+
+
+	<ItemGroup>
+		<SupportedPlatform Include="browser" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="build\**" Pack="true" PackagePath="%(Identity)" />
+		<Content Include="_._" Pack="true" PackagePath="lib\net6.0\_._" />
+	</ItemGroup>
+
+	<Target Name="GetTasksOutputDlls" BeforeTargets="CoreCompile">
+		<MSBuild Projects="..\BlazorCacheBuster.Tasks\BlazorCacheBuster.Tasks.csproj" Targets="Publish;PublishItemsOutputGroup" Properties="Configuration=$(Configuration)">
+			<Output TaskParameter="TargetOutputs" ItemName="_TasksProjectOutputs" />
+		</MSBuild>
+		<ItemGroup>
+			<Content Include="@(_TasksProjectOutputs)" Condition="('%(_TasksProjectOutputs.Extension)' == '.dll' Or '%(_TasksProjectOutputs.Extension)' == '.dylib' Or '%(_TasksProjectOutputs.Extension)' == '.so' Or ('$(Configuration)' == 'Debug' And '%(_TasksProjectOutputs.Extension)' == '.pdb'))" Pack="true" PackagePath="tasks\%(_TasksProjectOutputs.TargetPath)" KeepMetadata="Pack;PackagePath" />
+		</ItemGroup>
+	</Target>
+
+</Project>

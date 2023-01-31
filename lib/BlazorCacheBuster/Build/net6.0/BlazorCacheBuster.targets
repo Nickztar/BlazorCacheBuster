@@ -1,0 +1,15 @@
+﻿<Project>
+	<PropertyGroup>
+		<_BlazorCBBrotliCompressDll>$(MSBuildThisFileDirectory)..\..\tools\BlazorCacheBuster.BrotliCompress.dll</_BlazorCBBrotliCompressDll>
+	</PropertyGroup>
+	<UsingTask TaskName="BlazorCacheBuster.Tasks.UpdateAssets"
+               AssemblyFile="$(MSBuildThisProjectFileDirectory)..\..\tasks\BlazorCacheBuster.Tasks.dll" />
+
+	<!-- Runs in the published project -->
+	<Target Name="_UpdateAssets" AfterTargets="Publish">
+		<UpdateAssets PublishDir="$(PublishDir)" DisableCacheBusting="$(DisableCacheBusting)" CacheId="$(CacheId)"
+			BlazorEnableCompression="$(BlazorEnableCompression)" CompressionLevel="$(_BlazorBrotliCompressionLevel)"
+			BrotliCompressToolPath="$(_BlazorCBBrotliCompressDll)"></UpdateBlazorScript>
+	</Target>
+
+</Project>
