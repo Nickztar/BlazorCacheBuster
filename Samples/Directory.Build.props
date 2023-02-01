@@ -1,0 +1,5 @@
+<Project>
+    <PropertyGroup>
+        <BlazorCacheBusterVersion>0.0.1-test</BlazorCacheBusterVersion>
+    </PropertyGroup>
+</Project>
