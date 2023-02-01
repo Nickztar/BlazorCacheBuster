@@ -7,6 +7,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace BlazorCacheBuster.Tasks
 {
@@ -64,5 +65,40 @@ namespace BlazorCacheBuster.Tasks
             }
             return true;
         }
+        
+        private static string ModuleRegExp = "\"(.*).lib.module.js\": \"(.*)\"";
+        public static List<(string Script, string Hash)> GetInitializersInBoot(string bootJson)
+        {
+            List<(string Script, string Hash)> scriptsFound = new List<(string Module, string Hash)>();
+            var matches = Regex.Matches(bootJson, ModuleRegExp);
+            foreach (Match match in matches)
+            {
+                //Valid matches are contain two, 
+                //First one is the full group (Whole row)
+                //Second one for the script module
+                //And third and final one for the hash
+                if (match.Groups.Count == 3)
+                {
+                    var script = match.Groups[1].Value;
+                    var hash = match.Groups[2].Value;
+                    scriptsFound.Add((script, hash));
+                }
+            }
+            return scriptsFound;
+        }
+
+//<script[\s\S]*?>[\s\S]*?<\/script>
+//<script.*?src="(.*?)"
+        public string GetContentHashForFile(string filePath)
+        {
+            using (var md5 = MD5.Create())
+            using (var stream = File.OpenRead(filePath))
+            {
+                var contentHash = md5.ComputeHash(stream);
+                var str = System.Text.Encoding.Default.GetString(contentHash);
+                return str;
+            }
+        }
+
     }
 }

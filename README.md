@@ -33,6 +33,14 @@ If you want to use a different query string for busting the cache, for example a
 <!-- By default it will be a new guid for every publish. -->
 <CacheId>1</CacheId>
 ```
+### **Automated cache busting**
+
+If you want a more automated way of doing this. By setting the following property this package will append the hash of the file as a query string
+
+```xml
+<!-- By default this is disabled, alteast for now. -->
+<CacheBustWithHash>true</CacheBustWithHash>
+```
 
 ### **Disable dll rename**
 
@@ -44,4 +52,3 @@ You can disable the cache busting add the following property in the **published*
 
 TODO:
 Be able to cache bust scripts/styles in index.html
-Automatically append the version of the assembly as query string
