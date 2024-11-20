@@ -35,18 +35,18 @@ Write-Host "Version suffix: test"
 
 Write-Message "Cleaning ..."
 Remove-Item -Path ../artifacts -Recurse -Force
-Get-ChildItem .\ -include bin, obj -Recurse | ForEach-Object ($_) { Remove-Item $_.FullName -Force -Recurse }
+Get-ChildItem ..\ -include bin, obj -Recurse | ForEach-Object ($_) { Remove-Item $_.FullName -Force -Recurse }
 
 # Confirm-PreviousCommand
 
 Write-Message "Building ..."
 dotnet build ../lib/BlazorCacheBuster.Tasks/BlazorCacheBuster.Tasks.csproj -c Release
 dotnet build ../lib/BlazorCacheBuster.BrotliCompress/BlazorCacheBuster.BrotliCompress.csproj -c Release
-dotnet build ../lib/BlazorCacheBuster/BlazorCacheBuster.csproj -c Release /p:VersionSuffix="testK"
+dotnet build ../lib/BlazorCacheBuster/BlazorCacheBuster.csproj -c Release /p:VersionSuffix="testJ"
 Confirm-PreviousCommand
 
 Write-Message "Creating nuget package ..."
-dotnet pack ../lib/BlazorCacheBuster/BlazorCacheBuster.csproj -c Release /p:VersionSuffix="testK" -o ../artifacts/nuget
+dotnet pack ../lib/BlazorCacheBuster/BlazorCacheBuster.csproj -c Release /p:VersionSuffix="testJ" -o ../artifacts/nuget
 Confirm-PreviousCommand
 
 Write-Message "Building WASM Sample App ..."

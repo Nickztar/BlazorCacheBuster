@@ -9,12 +9,11 @@
 		<UpdateAssets 
 			PublishDir="$(PublishDir)" 
 			BrotliCompressToolPath="$(_BlazorCBBrotliCompressDll)"
-			DisableCacheBusting="$(DisableCacheBusting)" 
-			BustIndexHtml="$(BustIndexHtml)" 
-			BlazorEnableCompression="$(BlazorEnableCompression)" 
-			CompressionLevel="$(_BlazorBrotliCompressionLevel)" 
-			CacheId="$(CacheId)" 
-			 />
+			BlazorDisableCacheBusting="$(BlazorDisableCacheBusting)" 
+			BlazorCacheBustIndexHtml="$(BlazorCacheBustIndexHtml)" 
+			BlazorCacheEnableCompression="$(BlazorCacheEnableCompression)" 
+			BlazorCacheCompressionLevel="$(_BlazorBrotliCompressionLevel)" 
+			BlazorCacheId="$(BlazorCacheId)" />
 	</Target>
 
 </Project>

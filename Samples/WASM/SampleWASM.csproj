@@ -14,7 +14,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.2" PrivateAssets="all" />
-    <PackageReference Include="BlazorCacheBuster" Version="0.0.1-testK" />
+    <PackageReference Include="BlazorCacheBuster" Version="0.0.1-testJ" />
     <PackageReference Include="MudBlazor" Version="7.15.0" />
   </ItemGroup>
 
