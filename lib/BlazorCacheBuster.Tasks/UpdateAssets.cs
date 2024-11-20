@@ -4,6 +4,7 @@ using System;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace BlazorCacheBuster.Tasks
 {
@@ -17,7 +18,6 @@ namespace BlazorCacheBuster.Tasks
 
         public bool DisableCacheBusting { get; set; }
         public bool BustIndexHtml { get; set; }
-        public bool BustAllRelativeLinks { get; set; }
         public bool BlazorEnableCompression { get; set; } = true;
         public string? CompressionLevel { get; set; }
         public string CacheId { get; set; } = Guid.NewGuid().ToString("N");
@@ -69,26 +69,28 @@ namespace BlazorCacheBuster.Tasks
                 foreach (var wwwrootDir in wwwrootDirs)
                 {
                     var indexHtmlPath = Path.Combine(wwwrootDir, "index.html");
-                    Log.LogMessage(MessageImportance.High, $"BlazorCacheBuster: Busting Index. RelativeLinks: {BustAllRelativeLinks}");
+                    Log.LogMessage(MessageImportance.High, $"BlazorCacheBuster: Busting Index");
                     var indexHtml = File.ReadAllText(indexHtmlPath);
-                    var itemsToBust = Tools.FindScriptsInHtml(indexHtml, onlyCached: !BustAllRelativeLinks);
+                    var itemsToBust = Tools.FindScriptsInHtml(indexHtml, onlyCached: true);
                     foreach (var urlToBust in itemsToBust)
                     {
                         var cleanRelativePath = Tools.CleanUrl(urlToBust);
-                        Log.LogMessage(MessageImportance.High, $"BlazorCacheBuster: Trying to bust: {urlToBust}");
+                        Log.LogMessage(MessageImportance.High, $"BlazorCacheBuster: Trying to bust: {urlToBust}, relative {cleanRelativePath != null}");
                         if (cleanRelativePath == null)
                         {
                             indexHtml = indexHtml.Replace(urlToBust, urlToBust.Replace("q=cache", $"q={CacheId}"));
                             continue;
                         }
-                        var pathToBust = Path.Combine(wwwrootDir, urlToBust);
+                        var cleanPaths = cleanRelativePath.Split('\\', '/');
+                        var pathToBust = Path.Combine(cleanPaths.Prepend(wwwrootDir).ToArray());
                         var md5Hash = Tools.GetContentHashForFile(pathToBust);
+                        Log.LogMessage(MessageImportance.High, $"BlazorCacheBuster: Trying as relative: {cleanRelativePath}, path: {pathToBust}, hash: {md5Hash}");
                         if (md5Hash == null)
                         {
-                            indexHtml = indexHtml.Replace(urlToBust, Tools.AppendOrReplaceQuery(urlToBust, "q=cache", $"q={CacheId}", onlyReplace: !BustAllRelativeLinks));
+                            indexHtml = indexHtml.Replace(urlToBust, Tools.AppendOrReplaceQuery(urlToBust, "q=cache", $"q={CacheId}", onlyReplace: true));
                             continue;
                         }
-                        indexHtml = indexHtml.Replace(urlToBust, Tools.AppendOrReplaceQuery(urlToBust, "q=cache", $"q={md5Hash}", onlyReplace: !BustAllRelativeLinks));
+                        indexHtml = indexHtml.Replace(urlToBust, Tools.AppendOrReplaceQuery(urlToBust, "q=cache", $"q={md5Hash}", onlyReplace: true));
                     }
                     File.WriteAllText(indexHtmlPath, indexHtml);
                 }

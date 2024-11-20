@@ -1,21 +1,20 @@
 <Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RestoreAdditionalProjectSources>
 			$(RestoreAdditionalProjectSources);
-			$(MSBuildThisFileDirectory)../../artifacts/nuget
+			$(MSBuildThisFileDirectory)/../../artifacts/nuget/
     </RestoreAdditionalProjectSources>
     <BustIndexHtml>True</BustIndexHtml>
-    <BustAllRelativeLinks>True</BustAllRelativeLinks>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.2" PrivateAssets="all" />
-    <PackageReference Include="BlazorCacheBuster" Version="0.0.1-test4" />
+    <PackageReference Include="BlazorCacheBuster" Version="0.0.1-testK" />
   </ItemGroup>
 
 </Project>

@@ -67,8 +67,9 @@ namespace BlazorCacheBuster.Tasks
             }
             return true;
         }
-        
-        private static string ModuleRegExp = "\"(.*).lib.module.js\": \"(.*)\"";
+
+        private const string ModuleRegExp = "\"(.*).lib.module.js\": \"(.*)\"";
+
         public static List<(string Script, string Hash)> GetInitializersInBoot(string bootJson)
         {
             List<(string Script, string Hash)> scriptsFound = new List<(string Module, string Hash)>();
@@ -89,10 +90,11 @@ namespace BlazorCacheBuster.Tasks
             return scriptsFound;
         }
 
-        public static string? GetContentHashForFile(string filePath)
+        public static string? GetContentHashForFile(string? filePath)
         {
             try
             {
+                if (filePath is null) return null;
                 using var md5 = MD5.Create();
                 using var stream = File.OpenRead(filePath);
                 var contentHash = md5.ComputeHash(stream);
@@ -103,9 +105,10 @@ namespace BlazorCacheBuster.Tasks
                 return null;
             }
         }
-        
-        public static string CacheTagsRegExp = "<(script|link)[a-z1-9\"'\\/ =]*?(src|href)=['\"]((.*?)q=cache)['\"]";
-        public static string PathTagsRegExp = "<(script|link)[a-z1-9\"'\\/ =]*?(src|href)=['\"]((.*?))['\"]";
+
+        private const string CacheTagsRegExp = "<(script|link)[a-z1-9\"'\\/ =]*?(src|href)=['\"]((.*?)q=cache)['\"]";
+        private const string PathTagsRegExp = "<(script|link)[a-z1-9\"'\\/ =]*?(src|href)=['\"]((.*?))['\"]";
+
         public static IEnumerable<string> FindScriptsInHtml(string html, bool onlyCached = true)
         {
             var matches = Regex.Matches(html, onlyCached ? CacheTagsRegExp : PathTagsRegExp);
@@ -127,7 +130,7 @@ namespace BlazorCacheBuster.Tasks
             {
                 return null;
             }
-            var path = (url ?? "").Split('?', '#')[0];
+            var path = url.Split('?', '#')[0];
             return path;
         }
         

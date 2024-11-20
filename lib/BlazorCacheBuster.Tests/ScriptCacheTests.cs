@@ -87,11 +87,12 @@ public class ScriptCacheTests
     
     [Theory]
     [InlineData("https://ratscape.com/_framework/blazor.webassembly.js?q=cache", null)]
-    [InlineData("Assets/blazor.boot.json", "94360E2")]
+    [InlineData("Assets/blazor.boot.json?q=cache", "94360E2")]
     [InlineData("Assets/app.css", "854DB03")]
     public void GetUniqueishHashForFile(string path, string? expectedHash)
     {
-        var hash = Tools.GetContentHashForFile(path);
+        var cleanPath = Tools.CleanUrl(path);
+        var hash = Tools.GetContentHashForFile(cleanPath);
         hash.Should().Be(expectedHash);
     }
 }

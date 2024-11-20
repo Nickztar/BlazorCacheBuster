@@ -11,7 +11,6 @@
 			BrotliCompressToolPath="$(_BlazorCBBrotliCompressDll)"
 			DisableCacheBusting="$(DisableCacheBusting)" 
 			BustIndexHtml="$(BustIndexHtml)" 
-			BustAllRelativeLinks="$(BustAllRelativeLinks)" 
 			BlazorEnableCompression="$(BlazorEnableCompression)" 
 			CompressionLevel="$(_BlazorBrotliCompressionLevel)" 
 			CacheId="$(CacheId)" 
