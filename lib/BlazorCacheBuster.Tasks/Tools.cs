@@ -5,9 +5,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Web;
 
 namespace BlazorCacheBuster.Tasks
 {
@@ -50,9 +52,9 @@ namespace BlazorCacheBuster.Tasks
                 };
                 log.LogMessage(MessageImportance.Low, $"{startInfo.FileName} {startInfo.Arguments}");
                 var process = Process.Start(startInfo);
-                process.WaitForExit();
-                if (process.ExitCode != 0)
-                    throw new Exception($"The exit code of recompressing with Brotli command was not 0. (it was {process.ExitCode})");
+                process?.WaitForExit();
+                if (process?.ExitCode != 0)
+                    throw new Exception($"The exit code of recompressing with Brotli command was not 0. (it was {process?.ExitCode})");
             }
             catch (Exception ex)
             {
@@ -87,18 +89,62 @@ namespace BlazorCacheBuster.Tasks
             return scriptsFound;
         }
 
-//<script[\s\S]*?>[\s\S]*?<\/script>
-//<script.*?src="(.*?)"
-        public string GetContentHashForFile(string filePath)
+        public static string? GetContentHashForFile(string filePath)
         {
-            using (var md5 = MD5.Create())
-            using (var stream = File.OpenRead(filePath))
+            try
             {
+                using var md5 = MD5.Create();
+                using var stream = File.OpenRead(filePath);
                 var contentHash = md5.ComputeHash(stream);
-                var str = System.Text.Encoding.Default.GetString(contentHash);
-                return str;
+                return string.Concat(contentHash.Select(x => x.ToString("X2")))[..7];
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+        
+        public static string CacheTagsRegExp = "<(script|link)[a-z1-9\"'\\/ =]*?(src|href)=['\"]((.*?)q=cache)['\"]";
+        public static string PathTagsRegExp = "<(script|link)[a-z1-9\"'\\/ =]*?(src|href)=['\"]((.*?))['\"]";
+        public static IEnumerable<string> FindScriptsInHtml(string html, bool onlyCached = true)
+        {
+            var matches = Regex.Matches(html, onlyCached ? CacheTagsRegExp : PathTagsRegExp);
+            foreach (Match match in matches)
+            {
+                //Valid matches are contain two, 
+                //First one is the full group (Whole row)
+                //Second one for the script module
+                //And third and final one for the hash
+                var script = match.Groups[3].Value;
+                yield return script;
             }
         }
 
+
+        public static string? CleanUrl(string url)
+        {
+            if (!Uri.TryCreate(url, UriKind.Relative, out var uri))
+            {
+                return null;
+            }
+            var path = (url ?? "").Split('?', '#')[0];
+            return path;
+        }
+        
+        public static string AppendOrReplaceQuery(string source, string toReplace, string replacement, bool onlyReplace = false)
+        {
+            if (source.Contains(toReplace))
+            {
+                return source.Replace(toReplace, replacement);
+            }
+            
+            if (onlyReplace) return source;
+            
+            if (source.Contains('?'))
+            {
+                return source + replacement;
+            }
+            return source + "?" + replacement;
+        }
     }
 }

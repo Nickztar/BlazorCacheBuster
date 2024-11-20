@@ -1,0 +1,60 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.002.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "lib", "lib", "{C24D8108-5C4C-43A6-8143-36F42D94CBEB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorCacheBuster", "lib\BlazorCacheBuster\BlazorCacheBuster.csproj", "{94047789-5E0D-4F22-A044-16FBD7B6FD3F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorCacheBuster.BrotliCompress", "lib\BlazorCacheBuster.BrotliCompress\BlazorCacheBuster.BrotliCompress.csproj", "{D0FEB940-6576-40C2-8184-AEF96DF06BE8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorCacheBuster.Tasks", "lib\BlazorCacheBuster.Tasks\BlazorCacheBuster.Tasks.csproj", "{99951F50-D852-498A-9EB5-E8D4097648DB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{84BD76CA-0281-4F93-939D-1D7ECD79E38C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SampleWASM", "Samples\WASM\SampleWASM.csproj", "{23AD9A85-71D9-4210-92DD-5969DE459C6D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorCacheBuster.Tests", "lib\BlazorCacheBuster.Tests\BlazorCacheBuster.Tests.csproj", "{170DC28F-5DB2-45D1-940C-BAC5480074C2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{94047789-5E0D-4F22-A044-16FBD7B6FD3F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94047789-5E0D-4F22-A044-16FBD7B6FD3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94047789-5E0D-4F22-A044-16FBD7B6FD3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94047789-5E0D-4F22-A044-16FBD7B6FD3F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0FEB940-6576-40C2-8184-AEF96DF06BE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0FEB940-6576-40C2-8184-AEF96DF06BE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0FEB940-6576-40C2-8184-AEF96DF06BE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0FEB940-6576-40C2-8184-AEF96DF06BE8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{99951F50-D852-498A-9EB5-E8D4097648DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{99951F50-D852-498A-9EB5-E8D4097648DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{99951F50-D852-498A-9EB5-E8D4097648DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{99951F50-D852-498A-9EB5-E8D4097648DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{23AD9A85-71D9-4210-92DD-5969DE459C6D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23AD9A85-71D9-4210-92DD-5969DE459C6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23AD9A85-71D9-4210-92DD-5969DE459C6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23AD9A85-71D9-4210-92DD-5969DE459C6D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{170DC28F-5DB2-45D1-940C-BAC5480074C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{170DC28F-5DB2-45D1-940C-BAC5480074C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{170DC28F-5DB2-45D1-940C-BAC5480074C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{170DC28F-5DB2-45D1-940C-BAC5480074C2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{94047789-5E0D-4F22-A044-16FBD7B6FD3F} = {C24D8108-5C4C-43A6-8143-36F42D94CBEB}
+		{D0FEB940-6576-40C2-8184-AEF96DF06BE8} = {C24D8108-5C4C-43A6-8143-36F42D94CBEB}
+		{99951F50-D852-498A-9EB5-E8D4097648DB} = {C24D8108-5C4C-43A6-8143-36F42D94CBEB}
+		{23AD9A85-71D9-4210-92DD-5969DE459C6D} = {84BD76CA-0281-4F93-939D-1D7ECD79E38C}
+		{170DC28F-5DB2-45D1-940C-BAC5480074C2} = {C24D8108-5C4C-43A6-8143-36F42D94CBEB}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F576492D-A058-41B5-804E-510927C99B9E}
+	EndGlobalSection
+EndGlobal

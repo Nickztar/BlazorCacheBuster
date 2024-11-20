@@ -7,15 +7,15 @@
     <RestoreAdditionalProjectSources>
 			$(RestoreAdditionalProjectSources);
 			$(MSBuildThisFileDirectory)../../artifacts/nuget
-		</RestoreAdditionalProjectSources>
-    <IndexScripts>JS/test.js;JS/test2.js</IndexScripts>
+    </RestoreAdditionalProjectSources>
+    <BustIndexHtml>True</BustIndexHtml>
+    <BustAllRelativeLinks>True</BustAllRelativeLinks>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BlazorWasmAntivirusProtection" Version="2.4.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.2" PrivateAssets="all" />
-    <PackageReference Include="BlazorCacheBuster" Version="0.0.1-1" />
+    <PackageReference Include="BlazorCacheBuster" Version="0.0.1-test4" />
   </ItemGroup>
 
 </Project>

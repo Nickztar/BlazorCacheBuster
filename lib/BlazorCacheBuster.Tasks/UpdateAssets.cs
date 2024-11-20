@@ -10,17 +10,16 @@ namespace BlazorCacheBuster.Tasks
     public class UpdateAssets : Task
     {
         [Required]
-        public string PublishDir { get; set; }
+        public string PublishDir { get; set; } = string.Empty;
 
         [Required]
-        public string BrotliCompressToolPath { get; set; }
+        public string BrotliCompressToolPath { get; set; } = string.Empty;
 
         public bool DisableCacheBusting { get; set; }
-        public bool CacheBustWithHash { get; set; }
-        public bool CacheBustIndexHtml { get; set; }
+        public bool BustIndexHtml { get; set; }
+        public bool BustAllRelativeLinks { get; set; }
         public bool BlazorEnableCompression { get; set; } = true;
-        public string CompressionLevel { get; set; }
-        public string CacheReplacement { get; set; } = "cache";
+        public string? CompressionLevel { get; set; }
         public string CacheId { get; set; } = Guid.NewGuid().ToString("N");
         public override bool Execute()
         {
@@ -36,19 +35,11 @@ namespace BlazorCacheBuster.Tasks
                 var bootJsonBrPath = Path.Combine(frameworkDir, "blazor.boot.json.br");
 
                 var bootJson = File.ReadAllText(bootJsonPath);
-                if (CacheBustWithHash)
+                var scripts = Tools.GetInitializersInBoot(bootJson);
+                foreach (var (script, hash) in scripts)
                 {
-                    var scripts = Tools.GetInitializersInBoot(bootJson);
-                    foreach (var (script, hash) in scripts)
-                    {
-                        Log.LogMessage(MessageImportance.High, $"BlazorCacheBuster: Updating \"{script}.lib.module.js\" with hash \"{hash}\" as query string");
-                        bootJson = bootJson.Replace($"{script}.lib.module.js", $"{script}.lib.module.js?q={hash}");
-                    }
-                }
-                else
-                {
-                    Log.LogMessage(MessageImportance.High, $"BlazorCacheBuster: Updating \"{bootJsonPath}\" with new query string: \"{CacheId}\"");
-                    bootJson = bootJson.Replace(".lib.module.js", $".lib.module.js?q={CacheId}");
+                    Log.LogMessage(MessageImportance.High, $"BlazorCacheBuster: Updating \"{script}.lib.module.js\" with hash \"{hash}\" as query string");
+                    bootJson = bootJson.Replace($"{script}.lib.module.js", $"{script}.lib.module.js?q={hash}");
                 }
 
                 File.WriteAllText(bootJsonPath, bootJson);
@@ -64,21 +55,41 @@ namespace BlazorCacheBuster.Tasks
                 if (File.Exists(bootJsonBrPath) && BlazorEnableCompression)
                 {
                     Log.LogMessage(MessageImportance.High, $"BlazorCacheBuster: Recompressing \"{bootJsonBrPath}\"");
-                    if (!Tools.BrotliCompress(bootJsonPath, bootJsonBrPath, BrotliCompressToolPath, CompressionLevel, Log))
+                    if (!Tools.BrotliCompress(bootJsonPath, bootJsonBrPath, BrotliCompressToolPath, CompressionLevel!, Log))
                     {
                         return false;
                     }
                 }
             }
 
-            if (CacheBustIndexHtml)
+            if (BustIndexHtml)
             {
+                Log.LogMessage(MessageImportance.High, $"BlazorCacheBuster: Trying to cache bust index.html");
                 var wwwrootDirs = Directory.GetDirectories(PublishDir, "wwwroot", SearchOption.AllDirectories);
                 foreach (var wwwrootDir in wwwrootDirs)
                 {
                     var indexHtmlPath = Path.Combine(wwwrootDir, "index.html");
+                    Log.LogMessage(MessageImportance.High, $"BlazorCacheBuster: Busting Index. RelativeLinks: {BustAllRelativeLinks}");
                     var indexHtml = File.ReadAllText(indexHtmlPath);
-                    indexHtml = indexHtml.Replace("q=cache", $"q={CacheId}");
+                    var itemsToBust = Tools.FindScriptsInHtml(indexHtml, onlyCached: !BustAllRelativeLinks);
+                    foreach (var urlToBust in itemsToBust)
+                    {
+                        var cleanRelativePath = Tools.CleanUrl(urlToBust);
+                        Log.LogMessage(MessageImportance.High, $"BlazorCacheBuster: Trying to bust: {urlToBust}");
+                        if (cleanRelativePath == null)
+                        {
+                            indexHtml = indexHtml.Replace(urlToBust, urlToBust.Replace("q=cache", $"q={CacheId}"));
+                            continue;
+                        }
+                        var pathToBust = Path.Combine(wwwrootDir, urlToBust);
+                        var md5Hash = Tools.GetContentHashForFile(pathToBust);
+                        if (md5Hash == null)
+                        {
+                            indexHtml = indexHtml.Replace(urlToBust, Tools.AppendOrReplaceQuery(urlToBust, "q=cache", $"q={CacheId}", onlyReplace: !BustAllRelativeLinks));
+                            continue;
+                        }
+                        indexHtml = indexHtml.Replace(urlToBust, Tools.AppendOrReplaceQuery(urlToBust, "q=cache", $"q={md5Hash}", onlyReplace: !BustAllRelativeLinks));
+                    }
                     File.WriteAllText(indexHtmlPath, indexHtml);
                 }
             }
