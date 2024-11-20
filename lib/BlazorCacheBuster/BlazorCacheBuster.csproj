@@ -10,7 +10,7 @@
 		<PackageProjectUrl>https://github.com/nickztar/BlazorCacheBuster</PackageProjectUrl>
 		<Description>Pruge cache on publish</Description>
 		<VersionSuffix>$(VersionSuffix)</VersionSuffix>
-		<Version>0.0.1</Version>
+		<Version>0.0.2</Version>
 		<Version Condition=" '$(VersionSuffix)' != '' ">$(Version)-$(VersionSuffix)</Version>
 	</PropertyGroup>
 
